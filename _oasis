@@ -1,0 +1,43 @@
+OASISFormat:      0.3
+OCamlVersion:     >= 4.02.3
+FindlibVersion:   >= 1.3.2
+Name:             ppx_custom_printf
+Version:          113.09.00
+Synopsis:         Printf-style format-strings for user-defined string conversion
+Authors:          Jane Street Group, LLC <opensource@janestreet.com>
+Copyrights:       (C) 2015 Jane Street Group LLC <opensource@janestreet.com>
+Maintainers:      Jane Street Group, LLC <opensource@janestreet.com>
+License:          Apache-2.0
+LicenseFile:      LICENSE.txt
+Homepage:         https://github.com/janestreet/ppx_custom_printf
+Plugins:          StdFiles (0.3), DevFiles (0.3), META (0.3)
+XStdFilesAUTHORS: false
+XStdFilesREADME:  false
+BuildTools:       ocamlbuild
+
+Library ppx_custom_printf
+  Path:               src
+  Pack:               false
+  Modules:            Ppx_custom_printf
+  BuildDepends:       compiler-libs,
+                      ppx_core,
+                      ppx_driver,
+                      ppx_sexp_conv.expander,
+                      ppx_custom_printf.format-lifter,
+                      ppx_tools.metaquot
+
+Library ppx_format_lifter
+  Path:               format-lifter
+  FindlibName:        format-lifter
+  FindlibParent:      ppx_custom_printf
+  Modules:            Ppx_format_lifter
+  Build:              true
+  Install:            true
+
+Executable ppx
+  Path:               as_ppx
+  MainIs:             ppx.ml
+  Build:              true
+  Install:            false
+  CompiledObject:     byte
+  BuildDepends:       ppx_custom_printf, ppx_driver
