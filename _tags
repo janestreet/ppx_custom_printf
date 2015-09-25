@@ -1,5 +1,45 @@
     <**/*.ml{,i}>: warn(-40-17)
 # OASIS_START
+# DO NOT EDIT (digest: 5c609b1e5313998c4553e2bb860e8be7)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
+# useless stuff for the build process
+true: annot, bin_annot
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library ppx_format_lifter
+"format-lifter/ppx_format_lifter.cmxs": use_ppx_format_lifter
+# Library ppx_custom_printf
+"src/ppx_custom_printf.cmxs": use_ppx_custom_printf
+<src/*.ml{,i,y}>: package(compiler-libs)
+<src/*.ml{,i,y}>: package(ppx_core)
+<src/*.ml{,i,y}>: package(ppx_driver)
+<src/*.ml{,i,y}>: package(ppx_sexp_conv.expander)
+<src/*.ml{,i,y}>: package(ppx_tools.metaquot)
+<src/*.ml{,i,y}>: use_ppx_format_lifter
+# Executable ppx
+"as_ppx/ppx.byte": package(compiler-libs)
+"as_ppx/ppx.byte": package(ppx_core)
+"as_ppx/ppx.byte": package(ppx_driver)
+"as_ppx/ppx.byte": package(ppx_sexp_conv.expander)
+"as_ppx/ppx.byte": package(ppx_tools.metaquot)
+"as_ppx/ppx.byte": use_ppx_custom_printf
+"as_ppx/ppx.byte": use_ppx_format_lifter
+<as_ppx/*.ml{,i,y}>: package(compiler-libs)
+<as_ppx/*.ml{,i,y}>: package(ppx_core)
+<as_ppx/*.ml{,i,y}>: package(ppx_driver)
+<as_ppx/*.ml{,i,y}>: package(ppx_sexp_conv.expander)
+<as_ppx/*.ml{,i,y}>: package(ppx_tools.metaquot)
+<as_ppx/*.ml{,i,y}>: use_ppx_custom_printf
+<as_ppx/*.ml{,i,y}>: use_ppx_format_lifter
 # OASIS_STOP
     <src/*>: linkall
 <as_ppx/ppx.{byte,native}>: predicate(ppx_driver)
