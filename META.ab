@@ -1,0 +1,18 @@
+version = "$(pkg_version)"
+description = "Printf-style format-strings for user-defined string conversion"
+requires = "ppx_core ppx_custom_printf.format-lifter ppx_driver ppx_sexp_conv.expander"
+archive(ppx_driver, byte          ) = "ppx_custom_printf.cma"
+archive(ppx_driver, native        ) = "ppx_custom_printf.cmxa"
+archive(ppx_driver, native, plugin) = "ppx_custom_printf.cmxs"
+exists_if = "ppx_custom_printf.cma"
+ppx(-ppx_driver) = "./ppx"
+
+package "format-lifter" (
+  version = "$(pkg_version)"
+  description = ""
+  requires = ""
+  archive(byte          ) = "ppx_format_lifter.cma"
+  archive(native        ) = "ppx_format_lifter.cmxa"
+  archive(native, plugin) = "ppx_format_lifter.cmxs"
+  exists_if = "ppx_format_lifter.cma"
+)

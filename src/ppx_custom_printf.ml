@@ -180,7 +180,7 @@ let string_to_expr ~loc s =
     let lexbuf = Lexing.from_string unparsed_type in
     lexbuf.lex_curr_p <- loc.loc_start;
     let ty = Parse.core_type lexbuf in
-    let e = Ppx_sexp_conv_expander.sexp_of ty in
+    let e = Ppx_sexp_conv_expander.Sexp_of.core_type ty in
     let arg = gen_symbol () in
     pexp_fun ~loc "" None (pvar ~loc arg)
       (eapply ~loc sexp_converter [eapply ~loc e [evar ~loc arg]])
@@ -274,7 +274,14 @@ let expand_format_string ~loc fmt_string =
     extract_custom_format_specifications ~loc fmt_string
   in
   let (CamlinternalFormat.Fmt_EBB fmt) =
-    CamlinternalFormat.fmt_ebb_of_string processed_fmt_string
+    try
+      CamlinternalFormat.fmt_ebb_of_string processed_fmt_string
+    with e ->
+      Location.raise_errorf ~loc "%s"
+        (match e with
+         (* [fmt_ebb_of_string] normally raises [Failure] on invalid input *)
+         | Failure msg -> msg
+         | e -> Printexc.to_string e)
   in
   let lifter = new lifter ~loc ~custom_specs in
   let format6 = CamlinternalFormatBasics.Format (fmt, fmt_string) in
@@ -289,7 +296,7 @@ let map = object
     match e.pexp_desc with
     | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident "!"; _ }
                   ; pexp_attributes = ident_attrs; _ },
-                  [ ("", { pexp_desc = Pexp_constant (Const_string (str, None))
+                  [ ("", { pexp_desc = Pexp_constant (Const_string (str, _))
                          ; pexp_loc = loc
                          ; pexp_attributes = str_attrs }) ]) ->
       assert_no_attributes ident_attrs;
@@ -300,8 +307,7 @@ let map = object
 end
 
 let () =
-  Ppx_driver.register_code_transformation
-    ~name:"custom_printf"
+  Ppx_driver.register_transformation "custom_printf"
     ~impl:(fun st -> map#structure st)
     ~intf:(fun sg -> map#signature sg)
 ;;

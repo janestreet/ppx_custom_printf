@@ -2,9 +2,10 @@
 (* OASIS_STOP *)
 # 3 "myocamlbuild.ml"
 
-let dispatch = function
+(* Temporary hacks *)
+let js_hacks = function
   | After_rules ->
-    rule "workaround buggy tooling"
+    rule "Generate a cmxs from a cmxa"
       ~dep:"%.cmxa"
       ~prod:"%.cmxs"
       ~insert:`top
@@ -12,10 +13,18 @@ let dispatch = function
          Cmd (S [ !Options.ocamlopt
                 ; A "-shared"
                 ; A "-linkall"
+                ; A "-I"; A (Pathname.dirname (env "%"))
                 ; A (env "%.cmxa")
                 ; A "-o"
                 ; A (env "%.cmxs")
-                ]));
+            ]));
+
+    (* Pass -predicates to ocamldep *)
+    pflag ["ocaml"; "ocamldep"] "predicate" (fun s -> S [A "-predicates"; A s])
+  | _ -> ()
+
+let dispatch = function
+  | After_rules ->
     rule "format lifter"
       ~prod:"format-lifter/ppx_format_lifter.ml"
       (fun _ _ ->
@@ -28,4 +37,9 @@ let dispatch = function
   | _ ->
     ()
 
-let () = Ocamlbuild_plugin.dispatch (fun hook -> dispatch hook; dispatch_default hook)
+let () =
+  Ocamlbuild_plugin.dispatch (fun hook ->
+    js_hacks hook;
+    dispatch hook;
+    dispatch_default hook)
+
