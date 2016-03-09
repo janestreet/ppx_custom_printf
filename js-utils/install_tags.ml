@@ -7,8 +7,8 @@ let sections =
     ],
     [ ("META", None)
     ])
-  ; ("libexec",
-    [ ("built_exec_ppx", Some "ppx")
+  ; ("bin",
+    [ ("built_exec_ppx", Some "../lib/ppx_custom_printf/ppx")
     ],
     [])
   ]
