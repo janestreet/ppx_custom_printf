@@ -182,7 +182,7 @@ let string_to_expr ~loc s =
     let ty = Parse.core_type lexbuf in
     let e = Ppx_sexp_conv_expander.Sexp_of.core_type ty in
     let arg = gen_symbol () in
-    pexp_fun ~loc "" None (pvar ~loc arg)
+    pexp_fun ~loc Nolabel None (pvar ~loc arg)
       (eapply ~loc sexp_converter [eapply ~loc e [evar ~loc arg]])
   | None ->
     let fail loc =
@@ -214,7 +214,7 @@ let string_to_expr ~loc s =
     let func = pexp_ident ~loc (Located.mk ~loc to_string_id) in
     (* Eta-expand as the to_string function might take optional arguments *)
     let arg = gen_symbol () in
-    pexp_fun ~loc "" None (pvar ~loc arg) (eapply ~loc func [evar ~loc arg])
+    pexp_fun ~loc Nolabel None (pvar ~loc arg) (eapply ~loc func [evar ~loc arg])
 
 class lifter ~loc ~custom_specs = object(self)
   inherit [expression] Ppx_format_lifter.lifter as super
@@ -296,9 +296,9 @@ let map = object
     match e.pexp_desc with
     | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident "!"; _ }
                   ; pexp_attributes = ident_attrs; _ },
-                  [ ("", { pexp_desc = Pexp_constant (Const_string (str, _))
-                         ; pexp_loc = loc
-                         ; pexp_attributes = str_attrs }) ]) ->
+                  [ (Nolabel, { pexp_desc = Pexp_constant (Pconst_string (str, _))
+                              ; pexp_loc = loc
+                              ; pexp_attributes = str_attrs }) ]) ->
       assert_no_attributes ident_attrs;
       assert_no_attributes str_attrs;
       let e' = expand_format_string ~loc str in
