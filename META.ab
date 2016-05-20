@@ -1,6 +1,6 @@
 version = "$(pkg_version)"
 description = "Printf-style format-strings for user-defined string conversion"
-requires = "ppx_core ppx_custom_printf.format-lifter ppx_driver ppx_sexp_conv.expander"
+requires = "compiler-libs.common ppx_core ppx_custom_printf.format-lifter ppx_driver ppx_sexp_conv.expander"
 archive(ppx_driver, byte  ) = "ppx_custom_printf.cma"
 archive(ppx_driver, native) = "ppx_custom_printf.cmxa"
 plugin(ppx_driver, byte  ) = "ppx_custom_printf.cma"

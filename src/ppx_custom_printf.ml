@@ -289,25 +289,20 @@ let expand_format_string ~loc fmt_string =
   lifter#lift_Pervasives_format6
     phantom phantom phantom phantom phantom phantom format6
 
-let map = object
-  inherit Ast_traverse.map as super
-  method! expression e =
-    let e = super#expression e in
-    match e.pexp_desc with
-    | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident "!"; _ }
-                  ; pexp_attributes = ident_attrs; _ },
-                  [ ("", { pexp_desc = Pexp_constant (Const_string (str, _))
-                         ; pexp_loc = loc
-                         ; pexp_attributes = str_attrs }) ]) ->
-      assert_no_attributes ident_attrs;
-      assert_no_attributes str_attrs;
-      let e' = expand_format_string ~loc str in
-      { e' with pexp_attributes = e.pexp_attributes }
-    | _ -> e
-end
+let expand e =
+  match e.pexp_desc with
+  | Pexp_apply ({ pexp_attributes = ident_attrs; _ },
+                [ ("", { pexp_desc = Pexp_constant (Const_string (str, _))
+                       ; pexp_loc = loc
+                       ; pexp_attributes = str_attrs }) ]) ->
+    assert_no_attributes ident_attrs;
+    assert_no_attributes str_attrs;
+    let e' = expand_format_string ~loc str in
+    Some { e' with pexp_attributes = e.pexp_attributes }
+  | _ -> None
+;;
 
 let () =
   Ppx_driver.register_transformation "custom_printf"
-    ~impl:(fun st -> map#structure st)
-    ~intf:(fun sg -> map#signature sg)
+    ~rules:[ Context_free.Rule.special_function "!" expand ]
 ;;
