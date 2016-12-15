@@ -2,12 +2,11 @@
  ((name ppx_custom_printf)
   (extra_disabled_warnings (3))
   (public_name ppx_custom_printf)
-  (public_release ((kind ppx_rewriter)))
-  (wrapped false)
-  (libraries (ocamlcommon
+  (kind ppx_rewriter)
+  (libraries (compiler-libs.common
               ppx_core
               ppx_driver
-              ppx_sexp_conv_expander
+              ppx_sexp_conv.expander
               ppx_format_lifter
               ))
-  (preprocess ((metaquot All)))))
+  (preprocess metaquot)))

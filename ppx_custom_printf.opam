@@ -6,18 +6,18 @@ bug-reports: "https://github.com/janestreet/ppx_custom_printf/issues"
 dev-repo: "https://github.com/janestreet/ppx_custom_printf.git"
 license: "Apache-2.0"
 build: [
-  ["./configure" "--prefix" prefix]
-  [make]
+  ["jbuilder" "build-package" "ppx_custom_printf" "-j" jobs]
 ]
 depends: [
-  "ocamlbuild"     {build}
-  "oasis"          {build & >= "0.4"}
-  "ocamlfind"      {build & >= "1.3.2"}
-  "js-build-tools" {build}
+  "jbuilder"
   "ppx_core"
   "ppx_driver"
   "ppx_sexp_conv"
-  "ppx_tools"      {>= "0.99.3"}
+  "ppx_tools"     {>= "0.99.3"}
 ]
 available: [ ocaml-version >= "4.03.0" ]
-conflicts: [ "oasis" {= "0.4.7"} ]
+descr: "
+Printf-style format-strings for user-defined string conversion
+
+Part of the Jane Street's PPX rewriters collection.
+"

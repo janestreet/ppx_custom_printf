@@ -1,12 +1,11 @@
 (library
  ((name ppx_format_lifter)
   (public_name ppx_custom_printf.format-lifter)
-  (wrapped false)
   (libraries ())
   (extra_disabled_warnings (17 27))
-  (preprocess ((no_preprocessing All)))))
+  (preprocess no_preprocessing)))
 
 (rule
  ((targets (ppx_format_lifter.ml))
-  (deps (${ROOT}/external/ppx_tools_0.99.2/syntax/genlifter.exe))
-  (action "${ROOT}/external/ppx_tools_0.99.2/syntax/genlifter.exe Pervasives.format6 > ${@}")))
+  (deps ())
+  (action "${findlib:ppx_tools:genlifter} Pervasives.format6 > ${@}")))
