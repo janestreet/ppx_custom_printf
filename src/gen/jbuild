@@ -1,0 +1,5 @@
+(executables
+ ((names (gen))
+  (libraries (str compiler-libs.common compiler-libs.toplevel))
+  (link_executables false)
+  (preprocess no_preprocessing)))

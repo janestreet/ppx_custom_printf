@@ -1,10 +1,5 @@
-open StdLabels
-open Ppx_core.Std
-open Asttypes
-open Parsetree
+open Ppx_core
 open Ast_builder.Default
-
-[@@@metaloc loc]
 
 (* returns the index of the conversion spec (unless the end of string is reached) *)
 let rec skip_over_format_flags fmt i =
@@ -29,7 +24,7 @@ let has_subformats (fmt:string) =
     if i > lim
     then false
     else
-      if fmt.[i] = '%' then
+      if Char.equal fmt.[i] '%' then
         match skip_over_format_flags fmt (i + 1) with
         | `Eoi -> false
         | `Ok i ->
@@ -61,7 +56,7 @@ let explode ~loc (s:string) =
         else sub from len :: acc
       )
       else
-      if s.[to_] <> '%'
+      if Char.(<>) s.[to_] '%'
       then loop acc from (to_ + 1)
       else
         match skip_over_format_flags s (to_ + 1) with
@@ -81,8 +76,8 @@ let explode ~loc (s:string) =
                 "ppx_custom_printf: unexpected format flags before \
                  %%{} specification in %S" s;
             begin match String.index_from s (to_ + 2) '}' with
-            | exception Not_found -> as_normal_format_string
-            | i ->
+            | None -> as_normal_format_string
+            | Some i ->
               let l =
                 sub (to_ + 2) i
                 :: sub from to_
@@ -133,20 +128,6 @@ let extract_custom_format_specifications ~loc s =
 
 let gen_symbol = gen_symbol ~prefix:"_custom_printf"
 
-let chop_prefix s ~prefix =
-  let prefix_len = String.length prefix in
-  if String.length s >= prefix_len
-    && String.sub s ~pos:0 ~len:prefix_len = prefix
-  then Some (String.sub s ~pos:prefix_len ~len:(String.length s - prefix_len))
-  else None
-
-let split s ~on =
-  match String.index s on with
-  | exception Not_found -> None
-  | n ->
-    let len = String.length s in
-    Some (String.sub s ~pos:0 ~len:n, String.sub s ~pos:(n + 1) ~len:(len - n - 1))
-
 let is_space = function
   | ' ' | '\t' | '\n' | '\r' -> true
   | _ -> false
@@ -162,12 +143,12 @@ let strip s =
 
 let string_to_expr ~loc s =
   let sexp_converter_opt =
-    match split s ~on:':' with
+    match String.lsplit2 s ~on:':' with
     | None -> None
     | Some ("sexp", colon_suffix) ->
       Some ([%expr  Sexplib.Sexp.to_string_hum ], colon_suffix)
     | Some (colon_prefix, colon_suffix) ->
-      match chop_prefix colon_prefix ~prefix:"sexp#" with
+      match String.chop_prefix colon_prefix ~prefix:"sexp#" with
       | None -> None
       | Some hash_suffix ->
         Some (pexp_ident ~loc
@@ -192,7 +173,7 @@ let string_to_expr ~loc s =
         s
     in
     let s, has_hash_suffix, to_string =
-      match split s ~on:'#' with
+      match String.lsplit2 s ~on:'#' with
       | None -> s, false, "to_string"
       | Some (s, hash_suffix) -> s, true, "to_string_" ^ hash_suffix
     in
@@ -203,7 +184,7 @@ let string_to_expr ~loc s =
       | _ ->
         match Longident.parse s with
         | Lident n | Ldot (_, n) as id ->
-          if n <> "" && Char.uppercase n.[0] = n.[0] then
+          if String.(<>) n "" && Char.equal (Char.uppercase n.[0]) n.[0] then
             Longident.Ldot (id, to_string)
           else if not has_hash_suffix then
             id
@@ -217,9 +198,10 @@ let string_to_expr ~loc s =
     pexp_fun ~loc Nolabel None (pvar ~loc arg) (eapply ~loc func [evar ~loc arg])
 
 class lifter ~loc ~custom_specs = object(self)
-  inherit [expression] Ppx_format_lifter.lifter as super
+  inherit [expression] Format_lifter.lift as super
+  inherit Ppx_metaquot_lifters.expression_lifters loc
 
-  method! lift_CamlinternalFormatBasics_fmt
+  method! fmt
     : type f0 f1 f2 f3 f4 f5. (f0 -> expression)
       -> (f1 -> expression)
       -> (f2 -> expression)
@@ -237,36 +219,18 @@ class lifter ~loc ~custom_specs = object(self)
            can have some scar char sets left. *)
         when idx >= 0 && idx < Array.length custom_specs ->
         let rest =
-          self#lift_CamlinternalFormatBasics_fmt (fun _ -> assert false) f1 f2 f3 f4 f5
+          self#fmt (fun _ -> assert false) f1 f2 f3 f4 f5
             fmt
         in
         let func = string_to_expr ~loc custom_specs.(idx) in
         [%expr
-          CamlinternalFormatBasics.Custom(CamlinternalFormatBasics.Custom_succ
-                                            CamlinternalFormatBasics.Custom_zero,
-                                          (fun () -> [%e func]),
-                                          [%e rest])
+          Custom(Custom_succ
+                   Custom_zero,
+                 (fun () -> [%e func]),
+                 [%e rest])
         ]
       | _ ->
-        super#lift_CamlinternalFormatBasics_fmt f0 f1 f2 f3 f4 f5 fmt
-
-  method string x = estring ~loc x
-  method int x = eint ~loc x
-  method char x = echar ~loc x
-
-  method constr typ_name (name, args) =
-    let constr =
-      match String.rindex typ_name '.' with
-      | exception Not_found -> name
-      | i -> String.sub typ_name ~pos:0 ~len:(i + 1) ^ name
-    in
-    pexp_construct ~loc (Located.lident ~loc constr)
-      (match args with
-       | [] -> None
-       | _  -> Some (pexp_tuple ~loc args))
-
-  method existential _ = assert false
-  method arrow _ = assert false
+        super#fmt f0 f1 f2 f3 f4 f5 fmt
 end
 
 let expand_format_string ~loc fmt_string =
@@ -286,8 +250,11 @@ let expand_format_string ~loc fmt_string =
   let lifter = new lifter ~loc ~custom_specs in
   let format6 = CamlinternalFormatBasics.Format (fmt, fmt_string) in
   let phantom _ = assert false in
-  lifter#lift_Pervasives_format6
-    phantom phantom phantom phantom phantom phantom format6
+  let e =
+    lifter#format6
+      phantom phantom phantom phantom phantom phantom format6
+  in
+  [%expr ([%e e] : (_, _, _, _, _, _) CamlinternalFormatBasics.format6)]
 
 let expand e =
   match e.pexp_desc with
