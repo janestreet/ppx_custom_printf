@@ -56,13 +56,13 @@ The format specifier `%{<Module-path>.<lowercase_identifier>}`
 corresponds to that function.  So, for example:
 
 ```ocaml
-printf !"The date is %{Core.Std.Date.to_string_iso8601_basic}" date
+printf !"The date is %{Core.Date.to_string_iso8601_basic}" date
 ```
 
 will turn `date` to a string using the following code:
 
 ```ocaml
-fun x -> Core.Std.Date.to_string_iso8601_basic x
+fun x -> Core.Date.to_string_iso8601_basic x
 ```
 
 Further, the format specifier
@@ -70,13 +70,13 @@ Further, the format specifier
 `<Module_path>.to_string_<lowercase_identifier>`.  So, for example:
 
 ```ocaml
-printf !"The date is %{Core.Std.Date#american}" date
+printf !"The date is %{Core.Date#american}" date
 ```
 
 will turn `date` to a string using:
 
 ```ocaml
-fun x -> Core.Std.Date.to_string_american x
+fun x -> Core.Date.to_string_american x
 ```
 
 Subformats disallowed
