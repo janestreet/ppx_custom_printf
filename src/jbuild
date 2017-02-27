@@ -17,3 +17,5 @@
  ((targets (format_lifter.ml))
   (deps    (gen/gen.bc))
   (action  (run ${<} -o format_lifter.ml))))
+
+(jbuild_version jane_street)
