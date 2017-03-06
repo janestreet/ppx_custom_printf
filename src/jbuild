@@ -9,7 +9,7 @@
               ppx_sexp_conv.expander
               ppx_metaquot.lifters
               ))
-  (preprocess (pps (ppx_metaquot ppx_traverse)))))
+  (preprocess (pps (ppx_metaquot ppx_traverse ppx_driver.runner)))))
 
 ;; This copies the types from CamlinternalFormatBasics and adds
 ;; [@@deriving traverse_lift]

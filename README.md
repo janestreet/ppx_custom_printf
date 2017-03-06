@@ -1,3 +1,8 @@
+---
+title: ppx_custom_printf
+parent: ../README.md
+---
+
 Extensions to printf-style format-strings for user-defined string conversion.
 
 `ppx_custom_printf` is a ppx rewriter that allows the use of
