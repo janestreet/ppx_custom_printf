@@ -18,4 +18,4 @@
   (deps    (gen/gen.bc))
   (action  (run ${<} -o format_lifter.ml))))
 
-(jbuild_version jane_street)
+(jbuild_version 1)
