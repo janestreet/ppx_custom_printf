@@ -1,8 +1,8 @@
 (library
  ((name ppx_custom_printf)
-  (flags (:standard -w -3))
   (public_name ppx_custom_printf)
   (kind ppx_rewriter)
+  (flags (:standard -safe-string))
   (libraries (compiler-libs.common
               ppx_core
               ppx_driver

@@ -48,7 +48,7 @@ let explode ~loc (s:string) =
   else
     let sub from to_ = String.sub s ~pos:from ~len:(to_ - from) in
     let rec loop acc from to_ =
-      assert (List.length acc mod 2 = 0);
+      assert (List.length acc % 2 = 0);
       if to_ >= len
       then List.rev (
         if from >= len
@@ -136,8 +136,8 @@ let is_space = function
 let strip s =
   let a = ref 0 in
   let b = ref (String.length s - 1) in
-  while !a <= !b && is_space s.[!a] do incr a done;
-  while !a <= !b && is_space s.[!b] do decr b done;
+  while !a <= !b && is_space s.[!a] do Int.incr a done;
+  while !a <= !b && is_space s.[!b] do Int.decr b done;
   if !a > !b then "" else String.sub s ~pos:!a ~len:(!b - !a + 1)
 ;;
 
@@ -153,7 +153,7 @@ let string_to_expr ~loc s =
       | Some hash_suffix ->
         Some (pexp_ident ~loc
                 (Located.mk ~loc
-                   (Longident.parse @@ "Sexplib.Sexp.to_string_" ^ hash_suffix)),
+                   (Longident.parse ("Sexplib.Sexp.to_string_" ^ hash_suffix))),
               colon_suffix)
   in
   match sexp_converter_opt with
@@ -245,7 +245,7 @@ let expand_format_string ~loc fmt_string =
         (match e with
          (* [fmt_ebb_of_string] normally raises [Failure] on invalid input *)
          | Failure msg -> msg
-         | e -> Printexc.to_string e)
+         | e -> Exn.to_string e)
   in
   let lifter = new lifter ~loc ~custom_specs in
   let format6 = CamlinternalFormatBasics.Format (fmt, fmt_string) in
