@@ -146,14 +146,14 @@ let string_to_expr ~loc s =
     match String.lsplit2 s ~on:':' with
     | None -> None
     | Some ("sexp", colon_suffix) ->
-      Some ([%expr  Sexplib.Sexp.to_string_hum ], colon_suffix)
+      Some ([%expr  Ppx_sexp_conv_lib.Sexp.to_string_hum ], colon_suffix)
     | Some (colon_prefix, colon_suffix) ->
       match String.chop_prefix colon_prefix ~prefix:"sexp#" with
       | None -> None
       | Some hash_suffix ->
         Some (pexp_ident ~loc
                 (Located.mk ~loc
-                   (Longident.parse ("Sexplib.Sexp.to_string_" ^ hash_suffix))),
+                   (Longident.parse ("Ppx_sexp_conv_lib.Sexp.to_string_" ^ hash_suffix))),
               colon_suffix)
   in
   match sexp_converter_opt with

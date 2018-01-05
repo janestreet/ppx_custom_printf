@@ -1,6 +1,6 @@
 let sprintf = Printf.sprintf
 let ksprintf = Printf.ksprintf
-open Sexplib.Conv
+open Ppx_sexp_conv_lib.Conv
 
 module Time : sig
   type t
@@ -72,9 +72,9 @@ let%test "sexp conversion" =
 
 (* checking sexp#mach: format *)
 let%test "sexp#mach conversion" =
-  let module Sexplib = struct
+  let module Ppx_sexp_conv_lib = struct
     module Sexp = struct
-      include Sexplib.Sexp
+      include Ppx_sexp_conv_lib.Sexp
       let to_string_mach sexp = to_string sexp ^ " (in machine format)"
     end
   end
