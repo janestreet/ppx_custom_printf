@@ -1,4 +1,5 @@
-open Ppx_core
+open Base
+open Ppxlib
 open Ast_builder.Default
 
 (* returns the index of the conversion spec (unless the end of string is reached) *)
@@ -199,7 +200,7 @@ let string_to_expr ~loc s =
 
 class lifter ~loc ~custom_specs = object(self)
   inherit [expression] Format_lifter.lift as super
-  inherit Ppx_metaquot_lifters.expression_lifters loc
+  inherit Ppxlib_metaquot_lifters.expression_lifters loc
 
   method! fmt
     : type f0 f1 f2 f3 f4 f5. (f0 -> expression)
@@ -270,6 +271,6 @@ let expand e =
 ;;
 
 let () =
-  Ppx_driver.register_transformation "custom_printf"
+  Driver.register_transformation "custom_printf"
     ~rules:[ Context_free.Rule.special_function "!" expand ]
 ;;

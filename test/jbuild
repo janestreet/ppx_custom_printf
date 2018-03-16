@@ -2,7 +2,7 @@
  ((name custom_printf_sample)
   (flags (:standard -safe-string))
   (libraries (ppx_sexp_conv.runtime-lib))
-  (preprocess (pps (ppx_jane ppx_driver.runner)))))
+  (preprocess (pps (ppx_jane ppxlib.runner)))))
 
 (alias ((name DEFAULT)
         (deps (test.ml.pp))))
