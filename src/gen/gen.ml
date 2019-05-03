@@ -21,6 +21,7 @@ let () =
     let buf = Buffer.create 512 in
     let pp = formatter_of_buffer buf in
     pp_set_margin pp max_int; (* so we can parse line by line below *)
+    Toploop.initialize_toplevel_env ();
     assert (
       Lexing.from_string "include CamlinternalFormatBasics;;"
       |> !Toploop.parse_toplevel_phrase
