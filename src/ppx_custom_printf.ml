@@ -261,7 +261,7 @@ let expand e =
   match e.pexp_desc with
   | Pexp_apply ({ pexp_attributes = ident_attrs; _ },
                 [ (Nolabel, { pexp_desc = Pexp_constant (Pconst_string (str, _))
-                            ; pexp_loc = loc
+                            ; pexp_loc = loc; pexp_loc_stack = _
                             ; pexp_attributes = str_attrs }) ]) ->
     assert_no_attributes ident_attrs;
     assert_no_attributes str_attrs;
