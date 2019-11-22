@@ -160,6 +160,10 @@ let string_to_expr ~loc s =
   match sexp_converter_opt with
   | Some (sexp_converter, unparsed_type) ->
     let lexbuf = Lexing.from_string unparsed_type in
+    (* ~loc is the position of the string, not the position of the %{bla} group we're
+       looking at. The format strings don't contain location information, so we can't
+       actually find the proper positions. *)
+    lexbuf.lex_abs_pos <- loc.loc_start.pos_cnum;
     lexbuf.lex_curr_p <- loc.loc_start;
     let ty = Parse.core_type lexbuf in
     let e = Ppx_sexp_conv_expander.Sexp_of.core_type ty in
