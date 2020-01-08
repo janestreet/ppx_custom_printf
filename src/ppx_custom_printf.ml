@@ -270,7 +270,7 @@ let expand e =
     assert_no_attributes ident_attrs;
     assert_no_attributes str_attrs;
     let e' = expand_format_string ~loc str in
-    Some { e' with pexp_attributes = e.pexp_attributes }
+    Some { e' with pexp_attributes = Merlin_helpers.hide_attribute :: e.pexp_attributes }
   | _ -> None
 ;;
 
