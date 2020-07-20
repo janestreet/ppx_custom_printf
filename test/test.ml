@@ -56,7 +56,7 @@ let%test _ =
   = "[Time.to_string (Time.now ())], [Time.to_string_sec (Time.now ())], \
      [Time.to_string_abs (Time.now ())]\n"
 
-(* testing what happens is the expression to the left of the format string
+(* testing what happens if the expression to the left of the format string
    is a bit complicated *)
 let%test _ =
   let s = ksprintf (fun s ->
