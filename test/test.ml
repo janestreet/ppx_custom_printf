@@ -27,9 +27,9 @@ end = struct
 end
 
 let%test _ = sprintf !"The time is %{Time} and the timezone is %{Zone}.\n"
-  (Time.now ()) Zone.local
-  = "The time is [Time.to_string (Time.now ())] and the timezone is \
-     [Zone.to_string Zone.local].\n"
+               (Time.now ()) Zone.local
+             = "The time is [Time.to_string (Time.now ())] and the timezone is \
+                [Zone.to_string Zone.local].\n"
 
 (* check that custom directives with nothing in between are properly translated *)
 let%test _ = sprintf !"%{sexp:int}%{sexp:int}%{sexp:int}%{sexp:int}" 1 2 3 4 = "1234"
