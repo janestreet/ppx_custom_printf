@@ -222,30 +222,30 @@ class lifter ~loc ~custom_specs =
 
     method! fmt
       : type f0
-               f1
-               f2
-               f3
-               f4
-               f5.  (f0 -> expression)
-        -> (f1 -> expression)
-        -> (f2 -> expression)
-        -> (f3 -> expression)
-        -> (f4 -> expression)
-        -> (f5 -> expression)
-        -> (f0, f1, f2, f3, f4, f5) CamlinternalFormatBasics.fmt
-        -> expression =
+      f1
+      f2
+      f3
+      f4
+      f5.  (f0 -> expression)
+          -> (f1 -> expression)
+          -> (f2 -> expression)
+          -> (f3 -> expression)
+          -> (f4 -> expression)
+          -> (f5 -> expression)
+          -> (f0, f1, f2, f3, f4, f5) CamlinternalFormatBasics.fmt
+          -> expression =
       fun f0 f1 f2 f3 f4 f5 fmt ->
-      let open CamlinternalFormatBasics in
-      match fmt with
-      (* Recognize the special form "%index[...whatever...]" *)
-      | Scan_char_set (Some idx, _, fmt)
+        let open CamlinternalFormatBasics in
+        match fmt with
+        (* Recognize the special form "%index[...whatever...]" *)
+        | Scan_char_set (Some idx, _, fmt)
         (* [custom_specs] is empty if [explode] couldn't parse the string. In this case we
            can have some scar char sets left. *)
-        when idx >= 0 && idx < Array.length custom_specs ->
-        let rest = self#fmt (fun _ -> assert false) f1 f2 f3 f4 f5 fmt in
-        let func = string_to_expr ~loc custom_specs.(idx) in
-        [%expr Custom (Custom_succ Custom_zero, (fun () -> [%e func]), [%e rest])]
-      | _ -> super#fmt f0 f1 f2 f3 f4 f5 fmt
+          when idx >= 0 && idx < Array.length custom_specs ->
+          let rest = self#fmt (fun _ -> assert false) f1 f2 f3 f4 f5 fmt in
+          let func = string_to_expr ~loc custom_specs.(idx) in
+          [%expr Custom (Custom_succ Custom_zero, (fun () -> [%e func]), [%e rest])]
+        | _ -> super#fmt f0 f1 f2 f3 f4 f5 fmt
   end
 
 let expand_format_string ~loc fmt_string =
