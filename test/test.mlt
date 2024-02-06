@@ -2,7 +2,8 @@
 
 let f () = !"%{sexp:nosuchtype}"
 
-[%%expect {|
+[%%expect
+  {|
 Line _, characters 12-22:
 Error: Unbound value sexp_of_nosuchtype
 |}]
