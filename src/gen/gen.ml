@@ -30,10 +30,10 @@ let () =
       Buffer.contents buf
       |> Str.split (Str.regexp "\n")
       |> List.fold_left ~init:(false, []) ~f:(fun (in_type_group, acc) s ->
-           match lsplit2 s ~on:' ' with
-           | Some ("type", s) -> true, s :: acc
-           | Some ("and", s) when in_type_group -> true, s :: acc
-           | _ -> false, acc)
+        match lsplit2 s ~on:' ' with
+        | Some ("type", s) -> true, s :: acc
+        | Some ("and", s) when in_type_group -> true, s :: acc
+        | _ -> false, acc)
       |> snd
       |> List.rev
     in
