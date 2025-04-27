@@ -174,7 +174,7 @@ let string_to_expr ~loc s =
     lexbuf.lex_abs_pos <- loc.loc_start.pos_cnum;
     lexbuf.lex_curr_p <- loc.loc_start;
     let ty = Parse.core_type lexbuf in
-    let e = Ppx_sexp_conv_expander.Sexp_of.core_type ty in
+    let e = Ppx_sexp_conv_expander.Sexp_of.core_type ty ~localize:false in
     let arg = gen_symbol () in
     pexp_fun
       ~loc
