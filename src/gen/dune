@@ -1,5 +1,5 @@
 (executables
  (modes byte exe)
  (names gen)
- (libraries str compiler-libs.common compiler-libs.toplevel)
+ (libraries compiler-libs.common compiler-libs.toplevel str)
  (preprocess no_preprocessing))
