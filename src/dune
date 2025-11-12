@@ -2,7 +2,7 @@
  (name ppx_custom_printf)
  (public_name ppx_custom_printf)
  (kind ppx_rewriter)
- (libraries compiler-libs.common base ppxlib ppx_sexp_conv.expander
+ (libraries base compiler-libs.common ppx_sexp_conv.expander ppxlib
    ppxlib.metaquot_lifters)
  (preprocess
   (pps ppxlib.metaquot ppxlib.traverse)))
