@@ -44,8 +44,8 @@ let has_subformats (fmt : string) =
    specifications. *)
 let explode ~loc (s : string) =
   let len = String.length s in
-  (* for cases where we can't parse the string with custom format specifiers, consider
-     the string as a regular format string *)
+  (* for cases where we can't parse the string with custom format specifiers, consider the
+     string as a regular format string *)
   let as_normal_format_string = [ s ] in
   if has_subformats s
   then as_normal_format_string
@@ -115,9 +115,9 @@ let odds = function
 (* Returns a pair of:
 
    - a format string, which is [s] where all custom format specifications have been
-     replaced by ["%" ^ string_of_int index ^ "[.]"] where [index] is the number of
-     the custom format specification, starting from 0. This string can be passed directly
-     to [CamlinternalFormat.fmt_ebb_of_string]
+     replaced by ["%" ^ string_of_int index ^ "[.]"] where [index] is the number of the
+     custom format specification, starting from 0. This string can be passed directly to
+     [CamlinternalFormat.fmt_ebb_of_string]
    - an array of custom format specifications, in the order they appear in the original
      string
 *)
@@ -168,7 +168,7 @@ let string_to_expr ~loc s =
   match sexp_converter_opt with
   | Some (sexp_converter, unparsed_type) ->
     let lexbuf = Lexing.from_string unparsed_type in
-    (* ~loc is the position of the string, not the position of the %{bla} group we're
+    (* ~loc is the position of the string, not the position of the %[{bla}] group we're
        looking at. The format strings don't contain location information, so we can't
        actually find the proper positions. *)
     lexbuf.lex_abs_pos <- loc.loc_start.pos_cnum;

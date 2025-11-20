@@ -46,8 +46,7 @@ let%test _ =
   sprintf !"%{to_string}\n" 42 = "42\n"
 ;;
 
-(* check the X#y kinds of format and that arguments are not
-   reversed somehow *)
+(* check the X#y kinds of format and that arguments are not reversed somehow *)
 let%test _ =
   let now = Time.now () in
   sprintf !"%{Time}, %{Time#sec}, %{Time.to_string_abs}\n%!" now now now
@@ -64,8 +63,8 @@ let%test _ =
      [Time.to_string_abs (Time.now ())]\n"
 ;;
 
-(* testing what happens if the expression to the left of the format string
-   is a bit complicated *)
+(* testing what happens if the expression to the left of the format string is a bit
+   complicated *)
 let%test _ =
   let s = ksprintf (fun s -> s ^ " foo") !"%{Time} bar" (Time.now ()) in
   s = "[Time.to_string (Time.now ())] bar foo"
