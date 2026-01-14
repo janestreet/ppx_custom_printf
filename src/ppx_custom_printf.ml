@@ -18,8 +18,8 @@ let rec skip_over_format_flags fmt i =
 
    One is that they are hard to understand and not often used.
 
-   Another is that subformats like "%(%{Module}%)" won't work, since it
-   is impossible to produce a format of type [(Module.t -> 'a,...) format].
+   Another is that subformats like "%(%[{Module}]%)" won't work, since it is impossible to
+   produce a format of type [(Module.t -> 'a,...) format].
 *)
 let has_subformats (fmt : string) =
   let lim = String.length fmt - 1 in
@@ -40,12 +40,12 @@ let has_subformats (fmt : string) =
 ;;
 
 (* returns a list of strings where even indexed elements are parts of the format string
-   that the preprocessor won't touch and odd indexed elements are the contents of %{...}
+   that the preprocessor won't touch and odd indexed elements are the contents of %[{...}]
    specifications. *)
 let explode ~loc (s : string) =
   let len = String.length s in
-  (* for cases where we can't parse the string with custom format specifiers, consider
-     the string as a regular format string *)
+  (* for cases where we can't parse the string with custom format specifiers, consider the
+     string as a regular format string *)
   let as_normal_format_string = [ s ] in
   if has_subformats s
   then as_normal_format_string
@@ -115,9 +115,9 @@ let odds = function
 (* Returns a pair of:
 
    - a format string, which is [s] where all custom format specifications have been
-     replaced by ["%" ^ string_of_int index ^ "[.]"] where [index] is the number of
-     the custom format specification, starting from 0. This string can be passed directly
-     to [CamlinternalFormat.fmt_ebb_of_string]
+     replaced by ["%" ^ string_of_int index ^ "[.]"] where [index] is the number of the
+     custom format specification, starting from 0. This string can be passed directly to
+     [CamlinternalFormat.fmt_ebb_of_string]
    - an array of custom format specifications, in the order they appear in the original
      string
 *)
@@ -168,7 +168,7 @@ let string_to_expr ~loc s =
   match sexp_converter_opt with
   | Some (sexp_converter, unparsed_type) ->
     let lexbuf = Lexing.from_string unparsed_type in
-    (* ~loc is the position of the string, not the position of the %{bla} group we're
+    (* ~loc is the position of the string, not the position of the %[{bla}] group we're
        looking at. The format strings don't contain location information, so we can't
        actually find the proper positions. *)
     lexbuf.lex_abs_pos <- loc.loc_start.pos_cnum;
