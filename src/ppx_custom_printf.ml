@@ -18,8 +18,8 @@ let rec skip_over_format_flags fmt i =
 
    One is that they are hard to understand and not often used.
 
-   Another is that subformats like "%(%{Module}%)" won't work, since it
-   is impossible to produce a format of type [(Module.t -> 'a,...) format].
+   Another is that subformats like "%(%[{Module}]%)" won't work, since it is impossible to
+   produce a format of type [(Module.t -> 'a,...) format].
 *)
 let has_subformats (fmt : string) =
   let lim = String.length fmt - 1 in
@@ -40,7 +40,7 @@ let has_subformats (fmt : string) =
 ;;
 
 (* returns a list of strings where even indexed elements are parts of the format string
-   that the preprocessor won't touch and odd indexed elements are the contents of %{...}
+   that the preprocessor won't touch and odd indexed elements are the contents of %[{...}]
    specifications. *)
 let explode ~loc (s : string) =
   let len = String.length s in
