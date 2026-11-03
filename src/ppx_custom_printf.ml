@@ -1,4 +1,4 @@
-open Base
+open Ppx_helpers.Base_lite
 open Ppxlib
 open Ast_builder.Default
 
@@ -52,7 +52,7 @@ let explode ~loc (s : string) =
   else (
     let sub from to_ = String.sub s ~pos:from ~len:(to_ - from) in
     let rec loop acc from to_ =
-      assert (List.length acc % 2 = 0);
+      assert (List.length acc mod 2 = 0);
       if to_ >= len
       then List.rev (if from >= len then acc else sub from len :: acc)
       else if Char.( <> ) s.[to_] '%'
