@@ -1,5 +1,4 @@
-ppx_custom_printf
-=================
+# ppx_custom_printf
 
 Extensions to printf-style format-strings for user-defined string conversion.
 

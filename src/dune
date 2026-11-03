@@ -2,7 +2,7 @@
  (name ppx_custom_printf)
  (public_name ppx_custom_printf)
  (kind ppx_rewriter)
- (libraries base compiler-libs.common ppx_sexp_conv.expander ppxlib
+ (libraries compiler-libs.common ppx_helpers ppx_sexp_conv.expander ppxlib
    ppxlib.metaquot_lifters)
  (preprocess
   (pps ppxlib.metaquot ppxlib.traverse)))
@@ -12,4 +12,4 @@
  (deps
   (:first_dep gen/gen.bc))
  (action
-  (run %{first_dep} -o format_lifter.ml)))
+  (bash "%{first_dep} -o format_lifter.ml")))
